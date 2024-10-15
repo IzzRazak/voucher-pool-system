@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div>
+
+        <h1>Offer Form</h1>
+        <div>
+            <form action="/submitOffer" method="post">
+                <table >
+                    <tr>
+                        <th style="text-align: left"><label>Name :</label></th>
+                        <td><input type="text" style="width: 100%" name="name"/></td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left"><label>Discount :</label></th>
+                        <td><input type="text" style="width: 100%" name="discount"/></td>
+                    </tr>
+                    <tr>
+                        <th style="text-align: left"><label>Expiration Date :</label></th>
+                        <td><input type="date" style="width: 100%" name="expirationDate"/></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: end;">
+                            <button style="cursor: pointer" type="submit">Submit</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>
