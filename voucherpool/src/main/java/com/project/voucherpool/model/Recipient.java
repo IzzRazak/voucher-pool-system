@@ -1,15 +1,18 @@
 package com.project.voucherpool.model;
 
-import javax.annotation.processing.Generated;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Entity
-public class Recepient {
+@Getter
+@Setter
+public class Recipient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long RecipientID;

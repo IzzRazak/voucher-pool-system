@@ -3,38 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+    <style>
+        body, button {
+            font-family: "Quicksand", sans-serif;
+        }
+
+        table.tbl, table.tbl thead tr th, table.tbl tbody tr td {
+            border: 1px solid black;
+        }
+
+        table.tbl tbody tr td button {
+            width: auto;
+            height: auto;
+        }
+    </style>
+    <script>
+    </script>
 </head>
 <body>
-    <div>
-
-        <h1>Offer Form</h1>
+    <div class="container">
         <div>
-            <form action="/submitOffer" method="post">
-                <table >
-                    <tr>
-                        <th style="text-align: left"><label>Name :</label></th>
-                        <td><input type="text" style="width: 100%" name="name"/></td>
-                    </tr>
-                    <tr>
-                        <th style="text-align: left"><label>Discount :</label></th>
-                        <td><input type="text" style="width: 100%" name="discount"/></td>
-                    </tr>
-                    <tr>
-                        <th style="text-align: left"><label>Expiration Date :</label></th>
-                        <td><input type="date" style="width: 100%" name="expirationDate"/></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" style="text-align: end;">
-                            <button style="cursor: pointer" type="submit">Submit</button>
-                        </td>
-                    </tr>
-                </table>
-            </form>
+            <h1>Offer Form</h1>
+            <div>
+                <form action="/submitOffer" method="post">
+                    <table>
+                        <tr>
+                            <th style="text-align: left"><label>Name :</label></th>
+                            <td><input type="text" style="width: 100%" name="Name" required/></td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left"><label>Discount :</label></th>
+                            <td><input type="text" style="width: 100%" name="PercentageDiscount" required/></td>
+                        </tr>
+                        <!--                    <tr>-->
+                        <!--                        <th style="text-align: left"><label>Expiration Date :</label></th>-->
+                        <!--                        <td><input type="date" style="width: 100%" name="expirationDate"/></td>-->
+                        <!--                    </tr>-->
+                        <tr>
+                            <td colspan="2" style="text-align: end;">
+                                <button style="cursor: pointer" type="submit">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
         </div>
+
+        <div>
+            <h1>Recipient Form</h1>
+            <div>
+                <form action="/submitRecipient" method="post">
+                    <table>
+                        <tr>
+                            <th style="text-align: left"><label>Name :</label></th>
+                            <td><input type="text" style="width: 100%" name="Name" required/></td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left"><label>Email :</label></th>
+                            <td><input type="text" style="width: 100%" name="Email" required/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: end;">
+                                <button style="cursor: pointer" type="submit">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+
+        <div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Discount</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody id="offers-row">
+
+                </tbody>
+            </table>
+        </div>
+
+<!--        <div>-->
+<!--            <button onclick=""-->
+<!--        </div>-->
+
     </div>
 
 
+    <script>
+        function getOfferData() {
+            const url = 'http://localhost:8081/getOffer';
 
+<!--            fetch(url)-->
+<!--                .then(response => {-->
+<!--                    if(!response.ok) {-->
+<!--                        throw new Error("Error in fetching Offer")-->
+<!--                    }-->
+<!--                    return response.text()-->
+<!--                })-->
+<!--                .then(data => {-->
+<!--                    console.log('Success:', data);-->
+<!--                })-->
+<!--                .catch(error => {-->
+<!--                    console.error('There was a problem with the fetch operation:', error);-->
+<!--                });-->
 
+            $.ajax({
+                url: "/getOffer",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    let offerRows = '';
+                    console.log(data)
+                    $.each(data, function(index, offer) {
+                        offerRows +=
+                        `<tr>
+                            <td>${offer.offerID}</td>
+                            <td>${offer.name}</td>
+                            <td>${offer.percentageDiscount}</td>
+                            <td><button onclick="generateVoucher(${offer.offerID})">Generate Voucher</button></td>
+                        </tr>`;
+                    });
+
+                    // Insert the rows into the table body
+                    $('#offers-row').html(offerRows);
+                },
+                error: function() {
+                    alert('Failed to fetch offers.');
+                }
+            });
+        }
+        getOfferData();
+
+        function generateVoucher(value) {
+            console.log(value)
+
+             $.ajax({
+                url: "/generateVoucher/" + value,
+                type: "POST",
+                dataType: "json",
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function() {
+                    alert('Failed to generate voucher.');
+                }
+            });
+        }
+    </script>
 </body>
 </html>
