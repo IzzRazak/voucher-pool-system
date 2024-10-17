@@ -17,19 +17,27 @@
 
         table.tbl, table.tbl thead tr th, table.tbl tbody tr td {
             border: 1px solid black;
+            padding: .5rem
         }
 
         table.tbl tbody tr td button {
             width: auto;
             height: auto;
         }
+
+        .content {
+            padding: 1rem;
+            margin: 1rem;
+            border: 1px solid #000;
+        }
+
     </style>
     <script>
     </script>
 </head>
 <body>
     <div class="container">
-        <div>
+        <div class="content">
             <h1>Offer Form</h1>
             <div>
                 <form action="/submitOffer" method="post">
@@ -56,22 +64,22 @@
             </div>
         </div>
 
-        <div>
+        <div class="content">
             <h1>Recipient Form</h1>
             <div>
                 <form action="/submitRecipient" method="post">
                     <table>
                         <tr>
                             <th style="text-align: left"><label>Name :</label></th>
-                            <td><input type="text" style="width: 100%" name="Name" required/></td>
+                            <td><input type="text" style="width: 100%" name="Name" class="form-control" required/></td>
                         </tr>
                         <tr>
                             <th style="text-align: left"><label>Email :</label></th>
-                            <td><input type="text" style="width: 100%" name="Email" required/></td>
+                            <td><input type="text" style="width: 100%" name="Email" class="form-control" required/></td>
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align: end;">
-                                <button style="cursor: pointer" type="submit">Submit</button>
+                                <button style="cursor: pointer" class="btn btn-primary" type="submit">Submit</button>
                             </td>
                         </tr>
                     </table>
@@ -80,7 +88,7 @@
         </div>
 
 
-        <div>
+        <div class="content">
             <table class="tbl">
                 <thead>
                     <tr>
@@ -150,9 +158,11 @@
 
         function generateVoucher(value) {
             console.log(value)
-
-             $.ajax({
-                url: "/generateVoucher/" + value,
+            var varDate = prompt("Please enter expiration date:", "e.g: 2024-09-01");
+            var queryUrl = "/generateVoucher?id=" + value + "&date=" + varDate;
+            console.log(queryUrl);
+            $.ajax({
+                url: queryUrl,
                 type: "POST",
                 dataType: "json",
                 success: function(data) {

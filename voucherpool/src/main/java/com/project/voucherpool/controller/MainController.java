@@ -4,22 +4,18 @@ import com.project.voucherpool.model.Offer;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 import com.project.voucherpool.model.Recipient;
-import com.project.voucherpool.repository.RecipientRepository;
-import com.project.voucherpool.service.OfferService;
+import com.project.voucherpool.service.MainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @Controller
 public class MainController {
 
     @Autowired
-    OfferService offerService;
+    MainService mainService;
 
 //    private static final Log
 //    ger log = LoggerFactory.getLogger(MainController.class);
@@ -31,14 +27,14 @@ public class MainController {
 
     @PostMapping("/submitRecipient")
     public String submitOffer(@ModelAttribute Recipient recipient) {
-        offerService.saveRecipient(recipient);
+        mainService.saveRecipient(recipient);
         log.info("form received => name: {}, email: {}", recipient.getName(), recipient.getEmail());
         return "redirect:/view";
     }
 
     @PostMapping("/submitOffer")
     public String submitRecipient(@ModelAttribute Offer offer) {
-        offerService.saveOffer(offer);
+        mainService.saveOffer(offer);
         log.info("form received => name: {}, discount: {}", offer.getName(), offer.getPercentageDiscount());
         return "redirect:/view";
     }
