@@ -19,14 +19,14 @@ import java.util.Date;
 public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long OfferID;
+    private Long offerID;
 
-    private String Name;
+    private String name;
 
-    private BigDecimal PercentageDiscount;
+    private BigDecimal percentageDiscount;
 
-    private Date CreatedAt;
+    private Date createdAt;
 
-    private Date LastUpdAt;
+    private Date lastUpdAt;
 }
 

@@ -44,11 +44,11 @@
                     <table>
                         <tr>
                             <th style="text-align: left"><label>Name :</label></th>
-                            <td><input type="text" style="width: 100%" name="Name" required/></td>
+                            <td><input type="text" style="width: 100%" name="name" required/></td>
                         </tr>
                         <tr>
                             <th style="text-align: left"><label>Discount :</label></th>
-                            <td><input type="text" style="width: 100%" name="PercentageDiscount" required/></td>
+                            <td><input type="text" style="width: 100%" name="percentageDiscount" required/></td>
                         </tr>
                         <!--                    <tr>-->
                         <!--                        <th style="text-align: left"><label>Expiration Date :</label></th>-->
@@ -67,15 +67,38 @@
         <div class="content">
             <h1>Recipient Form</h1>
             <div>
-                <form action="/submitRecipient" method="post">
+                <form id="recipientForm" action="/submitRecipient" method="post">
                     <table>
                         <tr>
                             <th style="text-align: left"><label>Name :</label></th>
-                            <td><input type="text" style="width: 100%" name="Name" class="form-control" required/></td>
+                            <td><input type="text" style="width: 100%" name="name" class="form-control" required/></td>
                         </tr>
                         <tr>
                             <th style="text-align: left"><label>Email :</label></th>
-                            <td><input type="text" style="width: 100%" name="Email" class="form-control" required/></td>
+                            <td><input type="text" style="width: 100%" name="email" class="form-control" required/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: end;">
+                                <button style="cursor: pointer" class="btn btn-primary" type="submit">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+
+        <div class="content">
+            <h1>Validate Voucher Form</h1>
+            <div>
+                <form id="validateForm"  method="post">
+                    <table>
+                        <tr>
+                            <th style="text-align: left"><label>Name :</label></th>
+                            <td><input type="text" style="width: 100%" name="code" class="form-control" required/></td>
+                        </tr>
+                        <tr>
+                            <th style="text-align: left"><label>Email :</label></th>
+                            <td><input type="text" style="width: 100%" name="email" class="form-control" required/></td>
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align: end;">
@@ -104,6 +127,20 @@
             </table>
         </div>
 
+        <div class="content">
+            <table class="tbl">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Code</th>
+                    <th>Expiration Date</th>
+                </tr>
+                </thead>
+                <tbody id="vouchers-row">
+
+                </tbody>
+            </table>
+        </div>
 <!--        <div>-->
 <!--            <button onclick=""-->
 <!--        </div>-->
@@ -114,20 +151,6 @@
     <script>
         function getOfferData() {
             const url = 'http://localhost:8081/getOffer';
-
-<!--            fetch(url)-->
-<!--                .then(response => {-->
-<!--                    if(!response.ok) {-->
-<!--                        throw new Error("Error in fetching Offer")-->
-<!--                    }-->
-<!--                    return response.text()-->
-<!--                })-->
-<!--                .then(data => {-->
-<!--                    console.log('Success:', data);-->
-<!--                })-->
-<!--                .catch(error => {-->
-<!--                    console.error('There was a problem with the fetch operation:', error);-->
-<!--                });-->
 
             $.ajax({
                 url: "/getOffer",
@@ -146,7 +169,6 @@
                         </tr>`;
                     });
 
-                    // Insert the rows into the table body
                     $('#offers-row').html(offerRows);
                 },
                 error: function() {
@@ -157,22 +179,104 @@
         getOfferData();
 
         function generateVoucher(value) {
-            console.log(value)
-            var varDate = prompt("Please enter expiration date:", "e.g: 2024-09-01");
+            var varDate = '';
+            varDate = prompt("Please enter expiration date:", "e.g: 2024-09-01");
             var queryUrl = "/generateVoucher?id=" + value + "&date=" + varDate;
-            console.log(queryUrl);
-            $.ajax({
-                url: queryUrl,
-                type: "POST",
-                dataType: "json",
-                success: function(data) {
-                    console.log(data);
-                },
-                error: function() {
-                    alert('Failed to generate voucher.');
-                }
-            });
+
+            if (varDate != null) {
+                $.ajax({
+                    url: queryUrl,
+                    type: "POST",
+                    dataType: "json",
+                    success: function(data) {
+                        console.log(data);
+                    },
+                    error: function() {
+                        alert('Failed to generate voucher.');
+                    }
+                });
+            }
         }
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('#recipientForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: "/submitRecipient",
+                    type: "POST",
+                    data: formData,
+                    success: function(data) {
+                        console.log(data);
+                        alert("Recipient has been created successfully");
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred';
+                        alert(errorMessage);
+                    }
+                });
+                $('#recipientForm')[0].reset();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#validateForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: "/validateVoucher",
+                    type: "POST",
+                    data: formData,
+                    success: function(data) {
+                        console.log(data);
+                        var msg = data.message + "
+                        alert(data.message);
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred';
+                        alert(errorMessage);
+                    }
+                });
+                $('#validateForm')[0].reset();
+            });
+        });
+    </script>
+
+    <script>
+        function getValidVoucher() {
+        const url = 'http://localhost:8081/getValidVoucher';
+
+        $.ajax({
+            url: "/getValidVoucher",
+            type: "GET",
+            dataType: "json",
+            success: function(data) {
+                let voucherRows = '';
+                console.log(data)
+                $.each(data, function(index, voucher) {
+                    voucherRows +=
+                    `<tr>
+                        <td>${voucher.voucherID}</td>
+                        <td>${voucher.code}</td>
+                        <td>${voucher.expirationDate}</td>
+                    </tr>`;
+                });
+
+                $('#vouchers-row').html(voucherRows);
+            },
+            error: function() {
+                alert('Failed to fetch voucher.');
+            }
+        });
+    }
+    getValidVoucher();
     </script>
 </body>
 </html>

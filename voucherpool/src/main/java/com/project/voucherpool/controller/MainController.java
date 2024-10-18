@@ -17,23 +17,15 @@ public class MainController {
     @Autowired
     MainService mainService;
 
-//    private static final Log
-//    ger log = LoggerFactory.getLogger(MainController.class);
-
     @GetMapping("/view")
     public String homePage() {
         return "home";
     }
 
-    @PostMapping("/submitRecipient")
-    public String submitOffer(@ModelAttribute Recipient recipient) {
-        mainService.saveRecipient(recipient);
-        log.info("form received => name: {}, email: {}", recipient.getName(), recipient.getEmail());
-        return "redirect:/view";
-    }
+
 
     @PostMapping("/submitOffer")
-    public String submitRecipient(@ModelAttribute Offer offer) {
+    public String submitOffer(@ModelAttribute Offer offer) {
         mainService.saveOffer(offer);
         log.info("form received => name: {}, discount: {}", offer.getName(), offer.getPercentageDiscount());
         return "redirect:/view";

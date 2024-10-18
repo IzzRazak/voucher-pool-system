@@ -1,9 +1,6 @@
 package com.project.voucherpool.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,14 +12,14 @@ import java.util.Date;
 public class Recipient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long RecipientID;
+    private Long recipientID;
 
-    private String Name;
+    private String name;
 
-    private String Email;
+    private String email;
 
-    private Date CreatedAt;
+    private Date createdAt;
 
-    private Date LastUpdAt;
+    private Date lastUpdAt;
 }
 

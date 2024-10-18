@@ -17,18 +17,22 @@ import java.util.Date;
 public class Voucher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long VoucherID;
+    private Long voucherID;
 
-    private Long OfferID;
+    private Long offerID;
 
-    private Long RecipientID;
+    private Long recipientID;
 
-    private String Code;
+    private String code;
 
-    private LocalDate ExpirationDate;
+    private String usage;
 
-    private Date CreatedAt;
+    private Date expirationDate;
 
-    private Date LastUpdAt;
+    private Date usedAt;
+
+    private Date createdAt;
+
+    private Date lastUpdAt;
 }
 

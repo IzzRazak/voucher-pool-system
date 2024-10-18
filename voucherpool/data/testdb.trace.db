@@ -14,3 +14,16 @@ SELECT * FROM VOUCHER V
 INNERJOIN RECIPIENT R WHERE V.RECIPIENTID = R.RECIPIENTID
 
 select * from VOUCHER [42000-224]
+2024-10-18 23:34:01.847833+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM VOUCHER \000d\000a\000d\000aUPDATE [*]VOUCHER SET USAGE = 'N'"; SQL statement:
+SELECT * FROM VOUCHER 
+
+UPDATE VOUCHER SET USAGE = 'N' [42000-224]
+2024-10-18 23:34:14.138347+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM VOUCHER \000d\000a\000d\000aUPDATE [*]VOUCHER SET USAGE = 'N'"; SQL statement:
+SELECT * FROM VOUCHER 
+
+UPDATE VOUCHER SET USAGE = 'N' [42000-224]
+2024-10-18 23:34:45.239541+08:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "UPDATE VOUCHER SET USAGE = 'Y' WHERE CODE =' 'C1ZLO1SD0Z[*]'"; SQL statement:
+UPDATE VOUCHER SET USAGE = 'Y' WHERE CODE =' 'C1ZLO1SD0Z' [42000-224]
