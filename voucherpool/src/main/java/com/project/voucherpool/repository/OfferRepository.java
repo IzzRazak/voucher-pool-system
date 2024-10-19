@@ -11,4 +11,5 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 
     @Query("SELECT ofr FROM Offer ofr WHERE ofr.offerID = :id")
     Offer findByOfferID(@Param("id") Long id);
+
 }

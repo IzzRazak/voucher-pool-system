@@ -1,9 +1,8 @@
 package com.project.voucherpool.controller;
 
-import com.project.voucherpool.model.Offer;
-import com.project.voucherpool.model.Recipient;
+import com.project.voucherpool.dto.VoucherExtDTO;
+import com.project.voucherpool.model.*;
 import com.project.voucherpool.model.ResponseBody;
-import com.project.voucherpool.model.Voucher;
 import com.project.voucherpool.service.MainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +28,7 @@ public class DataController {
     }
 
     @GetMapping("/getValidVoucher")
-    public List<Voucher> getValidVoucher() {
+    public List<VoucherExtDTO> getValidVoucher() {
         return mainService.getValidVoucher();
     }
 
@@ -50,8 +48,10 @@ public class DataController {
     @PostMapping("/generateVoucher")
     public ResponseEntity<ResponseBody> generateVoucher(@RequestParam("id") Long id,
                                                         @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        mainService.generateVoucher(id, date);
-        return new ResponseEntity<>(HttpStatus.OK);
+        ResponseBody response = new ResponseBody();
+        response = mainService.generateVoucher(id, date);
+
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @PostMapping("/validateVoucher")

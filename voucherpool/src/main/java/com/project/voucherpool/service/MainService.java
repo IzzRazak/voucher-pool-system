@@ -1,17 +1,13 @@
 package com.project.voucherpool.service;
 
-import com.project.voucherpool.model.Offer;
-import com.project.voucherpool.model.Recipient;
-import com.project.voucherpool.model.ResponseBody;
-import com.project.voucherpool.model.Voucher;
+import com.project.voucherpool.dto.VoucherExtDTO;
+import com.project.voucherpool.model.*;
 import com.project.voucherpool.repository.OfferRepository;
 import com.project.voucherpool.repository.RecipientRepository;
 import com.project.voucherpool.repository.VoucherRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.expression.ValueParserConfiguration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -42,8 +38,8 @@ public class MainService {
         return offerRepository.findAll();
     }
 
-    public List<Voucher> getValidVoucher() {
-        return voucherRepository.findByUsage("N");
+    public List<VoucherExtDTO> getValidVoucher() {
+        return voucherRepository.findByValidVoucher();
     }
 
     public Offer saveOffer(Offer offer) {
@@ -66,15 +62,26 @@ public class MainService {
         return new ResponseBody("", HttpStatus.OK.value(), rcpData);
     }
 
-    public String generateVoucher(Long varId, Date varDate) {
-        Optional<Offer> offer = offerRepository.findById(varId);
-        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    public ResponseBody generateVoucher(Long varId, Date varDate) {
+        Offer offer;
+        Optional<Offer> offerQuery = offerRepository.findById(varId);
 
+        if(offerQuery.isPresent())
+            offer = offerQuery.get();
+        else {
+            offer = null;
+            return new ResponseBody("Offer is not exist !", HttpStatus.FORBIDDEN.value(), null);
+        }
+
+        String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         List<Recipient> recipientList = recipientRepository.findAll();
+
+        if(offer.getIsVoucherExist().equals("Y"))
+            return new ResponseBody("Vouchers already existed !", HttpStatus.FORBIDDEN.value(), null);
 
         try {
             recipientList.stream().forEach(recipient -> {
-                String randomChars = formattedDate + recipient.getName() + recipient.getEmail() + offer.get().getName();
+                String randomChars = formattedDate + recipient.getName() + recipient.getEmail() + offer.getName();
                 randomChars = randomChars.replaceAll("[^a-zA-Z0-9]", "");
                 randomChars = randomChars.toUpperCase();
                 log.info("[INFO] Service : randomChars => {}", randomChars);
@@ -96,28 +103,35 @@ public class MainService {
             });
         } catch (Exception e) {
             log.info("[ERROR] Service : generateVoucher => {}", e.getMessage());
+            return new ResponseBody("Failed to generate voucher !", HttpStatus.FORBIDDEN.value(), null);
         }
 
-
-        return "";
+        return new ResponseBody("Vouchers have been created !", HttpStatus.OK.value(), null);
     }
 
     public ResponseBody validateVoucher(String code, String email) {
         try {
-            Voucher voucher = voucherRepository.findByCode(code);
+            Optional<Voucher> voucherQuery = voucherRepository.findyByCodeAndEmail(code, email);
+            log.info("[INFO] Service : voucher data => {}", voucherQuery);
 
-            if(voucher.getUsage().equals("Y"))
-                return new ResponseBody("Voucher has been used", HttpStatus.OK.value(), null);
+            if(voucherQuery.isPresent()) {
+                Voucher voucher = voucherQuery.get();
 
-            voucher.setUsage("Y");
-            voucher.setUsedAt(new Date());
-            voucher.setLastUpdAt(new Date());
+                if(voucher.getUsage().equals("Y"))
+                    return new ResponseBody("Voucher has been used !", HttpStatus.FORBIDDEN.value(), null);
 
-            voucherRepository.save(voucher);
-            Offer offer = offerRepository.findByOfferID(voucher.getOfferID());
+                voucher.setUsage("Y");
+                voucher.setUsedAt(new Date());
+                voucher.setLastUpdAt(new Date());
 
-            String msg = "Voucher has been validated ! Discount is " + df.format(offer.getPercentageDiscount()) + "%";
-            return new ResponseBody(msg, HttpStatus.OK.value(), null);
+                voucherRepository.save(voucher);
+                Offer offer = offerRepository.findByOfferID(voucher.getOfferID());
+
+                String msg = "Voucher has been validated ! Discount is " + df.format(offer.getPercentageDiscount()) + "%";
+                return new ResponseBody(msg, HttpStatus.OK.value(), null);
+            } else {
+                return new ResponseBody("Invalid data !", HttpStatus.OK.value(), null);
+            }
         } catch (Exception e) {
             log.info("Fail to validate voucher: {}", e.getMessage());
             return new ResponseBody("Failed to validate voucher", HttpStatus.FORBIDDEN.value(), null);

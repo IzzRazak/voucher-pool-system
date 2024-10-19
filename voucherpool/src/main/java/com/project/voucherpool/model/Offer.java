@@ -23,6 +23,8 @@ public class Offer {
 
     private String name;
 
+    private String isVoucherExist;
+
     private BigDecimal percentageDiscount;
 
     private Date createdAt;

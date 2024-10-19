@@ -37,18 +37,19 @@
 </head>
 <body>
     <div class="container">
+        <h1>Voucher Pool System</h1>
         <div class="content">
-            <h1>Offer Form</h1>
+            <h2>Offer Form</h2>
             <div>
                 <form action="/submitOffer" method="post">
                     <table>
                         <tr>
                             <th style="text-align: left"><label>Name :</label></th>
-                            <td><input type="text" style="width: 100%" name="name" required/></td>
+                            <td><input type="text" style="width: 100%" name="name" class="form-control" required/></td>
                         </tr>
                         <tr>
                             <th style="text-align: left"><label>Discount :</label></th>
-                            <td><input type="text" style="width: 100%" name="percentageDiscount" required/></td>
+                            <td><input type="text" style="width: 100%" name="percentageDiscount" class="form-control" required/></td>
                         </tr>
                         <!--                    <tr>-->
                         <!--                        <th style="text-align: left"><label>Expiration Date :</label></th>-->
@@ -56,7 +57,7 @@
                         <!--                    </tr>-->
                         <tr>
                             <td colspan="2" style="text-align: end;">
-                                <button style="cursor: pointer" type="submit">Submit</button>
+                                <button style="cursor: pointer" class="btn btn-primary" type="submit">Submit</button>
                             </td>
                         </tr>
                     </table>
@@ -65,7 +66,7 @@
         </div>
 
         <div class="content">
-            <h1>Recipient Form</h1>
+            <h2>Recipient Form</h2>
             <div>
                 <form id="recipientForm" action="/submitRecipient" method="post">
                     <table>
@@ -88,7 +89,7 @@
         </div>
 
         <div class="content">
-            <h1>Validate Voucher Form</h1>
+            <h2>Validate Voucher Form</h2>
             <div>
                 <form id="validateForm"  method="post">
                     <table>
@@ -117,7 +118,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Discount</th>
+                        <th>Discount (%)</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -131,8 +132,10 @@
             <table class="tbl">
                 <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Code</th>
+                    <th>Offer Name</th>
+                    <th>Discount (%)</th>
+                    <th>Email</th>
                     <th>Expiration Date</th>
                 </tr>
                 </thead>
@@ -165,7 +168,7 @@
                             <td>${offer.offerID}</td>
                             <td>${offer.name}</td>
                             <td>${offer.percentageDiscount}</td>
-                            <td><button onclick="generateVoucher(${offer.offerID})">Generate Voucher</button></td>
+                            <td><button onclick="generateVoucher(${offer.offerID})" class="btn btn-primary">Generate Voucher</button></td>
                         </tr>`;
                     });
 
@@ -190,9 +193,12 @@
                     dataType: "json",
                     success: function(data) {
                         console.log(data);
+                        var msg = data.message;
+                        alert(data.message);
                     },
-                    error: function() {
-                        alert('Failed to generate voucher.');
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred';
+                        alert(errorMessage);
                     }
                 });
             }
@@ -236,7 +242,7 @@
                     data: formData,
                     success: function(data) {
                         console.log(data);
-                        var msg = data.message + "
+                        var msg = data.message;
                         alert(data.message);
                     },
                     error: function(xhr, status, error) {
@@ -260,12 +266,14 @@
             success: function(data) {
                 let voucherRows = '';
                 console.log(data)
-                $.each(data, function(index, voucher) {
+                $.each(data, function(index, item) {
                     voucherRows +=
                     `<tr>
-                        <td>${voucher.voucherID}</td>
-                        <td>${voucher.code}</td>
-                        <td>${voucher.expirationDate}</td>
+                        <td>${item.voucher.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.percentageDiscount}</td>
+                        <td>${item.email}</td>
+                        <td>${item.voucher.expirationDate}</td>
                     </tr>`;
                 });
 
