@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,22 @@ public class DataController {
     @GetMapping("/getValidVoucher")
     public List<VoucherExtDTO> getValidVoucher() {
         return mainService.getValidVoucher();
+    }
+
+    @PostMapping("/submitOffer")
+    public ResponseEntity<ResponseBody> submitOffer(@RequestParam Map<String, String> formData) {
+        ResponseBody response = new ResponseBody();
+        String name = formData.get("name");
+        String discount = formData.get("percentageDiscount");
+
+        Offer offer = new Offer();
+        offer.setName(name);
+        offer.setPercentageDiscount(BigDecimal.valueOf(Long.parseLong(discount)));
+        log.info("form received => name: {}, discount: {}", offer.getName(), offer.getPercentageDiscount());
+
+        response = mainService.saveOffer(offer);
+
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(response.getStatusCode()));
     }
 
     @PostMapping("/submitRecipient")

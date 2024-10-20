@@ -42,24 +42,36 @@ public class MainService {
         return voucherRepository.findByValidVoucher();
     }
 
-    public Offer saveOffer(Offer offer) {
-        offer.setCreatedAt(new Date());
-        offer.setLastUpdAt(new Date());
-        return offerRepository.save(offer);
+    public ResponseBody saveOffer(Offer offer) {
+        try {
+            offer.setIsVoucherExist("N");
+            offer.setCreatedAt(new Date());
+            offer.setLastUpdAt(new Date());
+            Offer offerData = offerRepository.save(offer);
+            return new ResponseBody("", HttpStatus.OK.value(), offerData);
+        } catch (Exception e) {
+            log.info("Fail to save offer: {}", e.getMessage());
+            return new ResponseBody("Failed to save offer", HttpStatus.FORBIDDEN.value(), null);
+        }
     }
 
     public ResponseBody saveRecipient(Recipient recipient) {
-        boolean isEmailExist = recipientRepository.existsByEmail(recipient.getEmail());
+        try {
+            boolean isEmailExist = recipientRepository.existsByEmail(recipient.getEmail());
 
-        if(isEmailExist) {
-            log.info("[INFO] Service : isEmailExist => {}", isEmailExist);
-            return new ResponseBody("Email is exist", HttpStatus.FORBIDDEN.value(), null);
+            if(isEmailExist) {
+                log.info("[INFO] Service : isEmailExist => {}", isEmailExist);
+                return new ResponseBody("Email is exist", HttpStatus.FORBIDDEN.value(), null);
+            }
+
+            recipient.setCreatedAt(new Date());
+            recipient.setLastUpdAt(new Date());
+            Recipient rcpData = recipientRepository.save(recipient);
+            return new ResponseBody("", HttpStatus.OK.value(), rcpData);
+        } catch (Exception e) {
+            log.info("Fail to save recipient: {}", e.getMessage());
+            return new ResponseBody("Failed to save recipient", HttpStatus.FORBIDDEN.value(), null);
         }
-
-        recipient.setCreatedAt(new Date());
-        recipient.setLastUpdAt(new Date());
-        Recipient rcpData = recipientRepository.save(recipient);
-        return new ResponseBody("", HttpStatus.OK.value(), rcpData);
     }
 
     public ResponseBody generateVoucher(Long varId, Date varDate) {
@@ -86,10 +98,19 @@ public class MainService {
                 randomChars = randomChars.toUpperCase();
                 log.info("[INFO] Service : randomChars => {}", randomChars);
 
-                String voucherCode = generateRandomCode(randomChars);
+                Boolean voucherFlag = true; String voucherCode = "";
+                do {
+                    voucherCode = generateRandomCode(randomChars);
+                    Optional<Voucher> isCodeExist = voucherRepository.findByCode(voucherCode);
+
+                    if(isCodeExist.isEmpty())
+                        voucherFlag = false;
+
+                } while (voucherFlag);
 
                 log.info("[INFO] Service : voucher code => {}", voucherCode);
 
+                varDate.setHours(23);
                 Voucher voucher = new Voucher();
                 voucher.setCode(voucherCode);
                 voucher.setRecipientID(recipient.getRecipientID());
@@ -101,6 +122,11 @@ public class MainService {
 
                 voucherRepository.save(voucher);
             });
+
+            offer.setIsVoucherExist("Y");
+            offer.setLastUpdAt(new Date());
+
+            offerRepository.save(offer);
         } catch (Exception e) {
             log.info("[ERROR] Service : generateVoucher => {}", e.getMessage());
             return new ResponseBody("Failed to generate voucher !", HttpStatus.FORBIDDEN.value(), null);
@@ -111,7 +137,7 @@ public class MainService {
 
     public ResponseBody validateVoucher(String code, String email) {
         try {
-            Optional<Voucher> voucherQuery = voucherRepository.findyByCodeAndEmail(code, email);
+            Optional<Voucher> voucherQuery = voucherRepository.findByCodeAndEmail(code, email);
             log.info("[INFO] Service : voucher data => {}", voucherQuery);
 
             if(voucherQuery.isPresent()) {
@@ -119,6 +145,9 @@ public class MainService {
 
                 if(voucher.getUsage().equals("Y"))
                     return new ResponseBody("Voucher has been used !", HttpStatus.FORBIDDEN.value(), null);
+
+                if(voucher.getExpirationDate().compareTo(new Date()) < 0)
+                    return new ResponseBody("Voucher is expired !", HttpStatus.FORBIDDEN.value(), null);
 
                 voucher.setUsage("Y");
                 voucher.setUsedAt(new Date());

@@ -41,7 +41,7 @@
         <div class="content">
             <h2>Offer Form</h2>
             <div>
-                <form action="/submitOffer" method="post">
+                <form id="offerForm" action="/submitOffer" method="post">
                     <table>
                         <tr>
                             <th style="text-align: left"><label>Name :</label></th>
@@ -51,10 +51,6 @@
                             <th style="text-align: left"><label>Discount :</label></th>
                             <td><input type="text" style="width: 100%" name="percentageDiscount" class="form-control" required/></td>
                         </tr>
-                        <!--                    <tr>-->
-                        <!--                        <th style="text-align: left"><label>Expiration Date :</label></th>-->
-                        <!--                        <td><input type="date" style="width: 100%" name="expirationDate"/></td>-->
-                        <!--                    </tr>-->
                         <tr>
                             <td colspan="2" style="text-align: end;">
                                 <button style="cursor: pointer" class="btn btn-primary" type="submit">Submit</button>
@@ -68,7 +64,7 @@
         <div class="content">
             <h2>Recipient Form</h2>
             <div>
-                <form id="recipientForm" action="/submitRecipient" method="post">
+                <form id="recipientForm" method="post">
                     <table>
                         <tr>
                             <th style="text-align: left"><label>Name :</label></th>
@@ -76,7 +72,7 @@
                         </tr>
                         <tr>
                             <th style="text-align: left"><label>Email :</label></th>
-                            <td><input type="text" style="width: 100%" name="email" class="form-control" required/></td>
+                            <td><input type="email" style="width: 100%" name="email" class="form-control" required/></td>
                         </tr>
                         <tr>
                             <td colspan="2" style="text-align: end;">
@@ -167,9 +163,14 @@
                         `<tr>
                             <td>${offer.offerID}</td>
                             <td>${offer.name}</td>
-                            <td>${offer.percentageDiscount}</td>
-                            <td><button onclick="generateVoucher(${offer.offerID})" class="btn btn-primary">Generate Voucher</button></td>
-                        </tr>`;
+                            <td>${offer.percentageDiscount}</td>`;
+
+                        if(offer.isVoucherExist == "N")
+                            offerRows += `<td><button onclick="generateVoucher(${offer.offerID})" class="btn btn-primary">Generate Voucher</button></td>`;
+                        else
+                            offerRows += `<td>Voucher already exist</td>`;
+
+                        offerRows += `</tr>`;
                     });
 
                     $('#offers-row').html(offerRows);
@@ -204,6 +205,32 @@
             }
         }
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#offerForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: "/submitOffer",
+                    type: "POST",
+                    data: formData,
+                    success: function(data) {
+                        console.log(data);
+                        alert("Offer has been created successfully");
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.responseJSON ? xhr.responseJSON.message : 'An error occurred';
+                        alert(errorMessage);
+                    }
+                });
+                $('#offerForm')[0].reset();
+            });
+        });
+    </script>
+
     <script>
         $(document).ready(function() {
             $('#recipientForm').on('submit', function(event) {
@@ -273,10 +300,11 @@
                         <td>${item.name}</td>
                         <td>${item.percentageDiscount}</td>
                         <td>${item.email}</td>
-                        <td>${item.voucher.expirationDate}</td>
+                        <td>` + formatDate(item.voucher.expirationDate) + `</td>
                     </tr>`;
                 });
-
+<!--                <td>${item.voucher.expirationDate}</td>-->
+<!--  <td>` + formatDate(item.voucher.expirationDate) + `</td> -->
                 $('#vouchers-row').html(voucherRows);
             },
             error: function() {
@@ -285,6 +313,13 @@
         });
     }
     getValidVoucher();
+
+    function formatDate(varDate) {
+        if(varDate) {
+            const formattedDate = varDate.split('T')[0];
+            return formattedDate;
+        }
+    }
     </script>
 </body>
 </html>

@@ -11,14 +11,16 @@ import java.util.List;
 import java.util.Optional;
 
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
-    Voucher findByCode(String code);
+
+
+    Optional<Voucher> findByCode(String code);
 
     List<Voucher> findByUsage(String usage);
 
     @Query("SELECT vc FROM Voucher vc WHERE " +
             "vc.code = :code AND vc.recipientID = "+
             "(SELECT rc.recipientID from Recipient rc WHERE rc.email = :email)")
-    Optional<Voucher> findyByCodeAndEmail(@Param("code") String code,
+    Optional<Voucher> findByCodeAndEmail(@Param("code") String code,
                                             @Param("email") String email);
 
     @Query("SELECT ofr FROM Offer ofr WHERE ofr.offerID = :id")

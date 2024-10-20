@@ -17,19 +17,19 @@ public class MainController {
     @Autowired
     MainService mainService;
 
-    @GetMapping("/view")
+    @GetMapping("/home")
     public String homePage() {
         return "home";
     }
 
 
 
-    @PostMapping("/submitOffer")
-    public String submitOffer(@ModelAttribute Offer offer) {
-        mainService.saveOffer(offer);
-        log.info("form received => name: {}, discount: {}", offer.getName(), offer.getPercentageDiscount());
-        return "redirect:/view";
-    }
+//    @PostMapping("/submitOffer")
+//    public String submitOffer(@ModelAttribute Offer offer) {
+//        mainService.saveOffer(offer);
+//        log.info("form received => name: {}, discount: {}", offer.getName(), offer.getPercentageDiscount());
+//        return "redirect:/view";
+//    }
 
 
 
