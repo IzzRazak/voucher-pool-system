@@ -2,9 +2,10 @@
 
 <h3>Step to run project</h3>
 <ol>
+  <li>Set JAVA to be at version 21</li>
   <li>Download project as ZIP file</li>
   <li>Unzip folder</li>
-  <li>Open project folder name: 'voucherpool' at IDE (recommended: IntelliJ</li>
+  <li>Open project folder name: 'voucherpool' at IDE (recommended: IntelliJ)</li>
   <li>Build project</li>
   <li>At Command Prompt / Terminal, go to directory: /voucherpool</li>
   <li>Run script: mvn spring-boot:run</li>
