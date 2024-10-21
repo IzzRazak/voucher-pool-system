@@ -71,6 +71,15 @@ public class DataController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
+    @GetMapping("/getVoucherByEmail")
+    public ResponseEntity<ResponseBody> getVoucherByEmail(@RequestParam Map<String, String> formData) {
+        ResponseBody response = new ResponseBody();
+        String email = formData.get("email");
+        response =  mainService.getVoucherByEmail(email);
+        log.info("form received => email: {}", email);
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
+    }
+
     @PostMapping("/validateVoucher")
     public ResponseEntity<ResponseBody> validateVoucher(@RequestParam Map<String, String> formData) {
         ResponseBody response = new ResponseBody();

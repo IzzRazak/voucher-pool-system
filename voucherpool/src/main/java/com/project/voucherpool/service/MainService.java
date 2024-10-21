@@ -142,6 +142,24 @@ public class MainService {
         return new ResponseBody("Vouchers have been created !", HttpStatus.OK.value(), null);
     }
 
+    public ResponseBody getVoucherByEmail(String email) {
+        try {
+            List<VoucherExtDTO> voucherList = null;
+            // Get voucher by email and current date
+            Optional <List<VoucherExtDTO>> voucherquery = voucherRepository.findByEmailAndDate(email, new Date());
+            if(voucherquery.isPresent()) {
+                voucherList = voucherquery.get();
+                return new ResponseBody("", HttpStatus.OK.value(), voucherList);
+            } else {
+                return new ResponseBody("No valid voucher exist !", HttpStatus.FORBIDDEN.value(), voucherList);
+            }
+
+        } catch (Exception e) {
+            log.info("Fail to validate voucher: {}", e.getMessage());
+            return new ResponseBody("Failed to validate voucher", HttpStatus.FORBIDDEN.value(), null);
+        }
+    }
+
     public ResponseBody validateVoucher(String code, String email) {
         try {
             Optional<Voucher> voucherQuery = voucherRepository.findByCodeAndEmail(code, email);

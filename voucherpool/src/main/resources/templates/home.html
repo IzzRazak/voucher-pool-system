@@ -126,6 +126,43 @@
         </div>
 
         <div class="content">
+            <h2>Valid Voucher By Email Table</h2>
+
+            <h4>Get Voucher By Email Form</h4>
+            <div>
+                <form id="voucherByEmailForm"  method="get">
+                    <table>
+                        <tr>
+                            <th style="text-align: left"><label>Email :</label></th>
+                            <td><input type="text" style="width: 100%" name="email" class="form-control" required/></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: end;">
+                                <button style="cursor: pointer" class="btn btn-primary" type="submit">Submit</button>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+
+            <table class="tbl mt-4">
+                <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Offer Name</th>
+                    <th>Discount (%)</th>
+                    <th>Email</th>
+                    <th>Expiration Date</th>
+                </tr>
+                </thead>
+                <tbody id="vouchers2-row">
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="content">
             <h2>Valid Voucher Table</h2>
             <table class="tbl">
                 <thead>
@@ -315,6 +352,41 @@
             return formattedDate;
         }
     }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#voucherByEmailForm').on('submit', function(event) {
+                event.preventDefault();
+
+                var formData = $(this).serialize();
+
+                $.ajax({
+                    url: "/getVoucherByEmail",
+                    type: "GET",
+                    data: formData,
+                    success: function(data) {
+                        let voucherRows = '';
+                        console.log(data)
+                        $.each(data.data, function(index, item) {
+                            voucherRows +=
+                            `<tr>
+                                <td>${item.voucher.code}</td>
+                                <td>${item.name}</td>
+                                <td>${item.percentageDiscount}</td>
+                                <td>${item.email}</td>
+                                <td>` + formatDate(item.voucher.expirationDate) + `</td>
+                            </tr>`;
+                        });
+                        $('#vouchers2-row').html(voucherRows);
+                    },
+                    error: function() {
+                        alert('Failed to fetch voucher.');
+                    }
+                });
+                $('#voucherByEmailForm')[0].reset();
+            });
+        });
     </script>
 </body>
 </html>
