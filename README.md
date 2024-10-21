@@ -20,6 +20,13 @@
   <li>For Offer data, please enter valid date with format: 'YYYY-DD-MM'</li>
 </ul>
 
+<p><b>To add data</b></p>
+<ol>
+  <li>Go to respective form</li>
+  <li>Enter data</li>
+  <li>Submit form</li>
+</ol>
+
 <p><b>To generate voucher</b></p>
 <ol>
   <li>Go to Offer Table</li>
