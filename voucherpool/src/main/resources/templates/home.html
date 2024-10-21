@@ -142,10 +142,6 @@
                 </tbody>
             </table>
         </div>
-<!--        <div>-->
-<!--            <button onclick=""-->
-<!--        </div>-->
-
     </div>
 
 
@@ -286,7 +282,6 @@
 
     <script>
         function getValidVoucher() {
-        const url = 'http://localhost:8081/getValidVoucher';
 
         $.ajax({
             url: "/getValidVoucher",
@@ -305,8 +300,6 @@
                         <td>` + formatDate(item.voucher.expirationDate) + `</td>
                     </tr>`;
                 });
-<!--                <td>${item.voucher.expirationDate}</td>-->
-<!--  <td>` + formatDate(item.voucher.expirationDate) + `</td> -->
                 $('#vouchers-row').html(voucherRows);
             },
             error: function() {

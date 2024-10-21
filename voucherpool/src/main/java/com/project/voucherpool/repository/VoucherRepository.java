@@ -26,7 +26,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     @Query("SELECT ofr FROM Offer ofr WHERE ofr.offerID = :id")
     Offer findByOfferID(@Param("id") Long id);
 
-
+    // Get voucher with extended info from other table
     @Query("Select new com.project.voucherpool.dto.VoucherExtDTO(vcr, ofr.percentageDiscount, ofr.name, rcp.email) from Voucher vcr " +
             "INNER JOIN Offer ofr ON ofr.offerID = vcr.offerID " +
             "INNER JOIN Recipient rcp ON rcp.recipientID = vcr.recipientID " +

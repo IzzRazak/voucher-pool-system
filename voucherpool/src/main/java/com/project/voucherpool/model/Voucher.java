@@ -25,6 +25,7 @@ public class Voucher {
 
     private String code;
 
+    // Field to track either voucher used or not
     private String usage;
 
     private Date expirationDate;

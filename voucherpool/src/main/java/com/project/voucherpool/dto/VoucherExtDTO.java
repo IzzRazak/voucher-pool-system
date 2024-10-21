@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 public class VoucherExtDTO {
 
+    // For voucher DTO with extended info from other table
     private Voucher voucher;
     private String name;
     private BigDecimal percentageDiscount;

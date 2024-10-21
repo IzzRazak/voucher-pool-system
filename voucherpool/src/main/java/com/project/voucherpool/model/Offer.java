@@ -23,6 +23,7 @@ public class Offer {
 
     private String name;
 
+    // Field to indicate either voucher is generated or not
     private String isVoucherExist;
 
     private BigDecimal percentageDiscount;

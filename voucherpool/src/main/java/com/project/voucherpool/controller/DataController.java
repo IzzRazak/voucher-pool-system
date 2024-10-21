@@ -38,7 +38,7 @@ public class DataController {
         ResponseBody response = new ResponseBody();
         String name = formData.get("name");
         String discount = formData.get("percentageDiscount");
-
+        // Initialize offer data
         Offer offer = new Offer();
         offer.setName(name);
         offer.setPercentageDiscount(BigDecimal.valueOf(Long.parseLong(discount)));

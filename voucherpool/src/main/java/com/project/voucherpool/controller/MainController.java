@@ -17,26 +17,9 @@ public class MainController {
     @Autowired
     MainService mainService;
 
+    // Display base page (home)
     @GetMapping("/home")
     public String homePage() {
         return "home";
     }
-
-
-
-//    @PostMapping("/submitOffer")
-//    public String submitOffer(@ModelAttribute Offer offer) {
-//        mainService.saveOffer(offer);
-//        log.info("form received => name: {}, discount: {}", offer.getName(), offer.getPercentageDiscount());
-//        return "redirect:/view";
-//    }
-
-
-
-//    @PostMapping("/submitOffer")
-//    public String submitOffer(@RequestParam String name, @RequestParam String discount, @RequestParam("expirationDate") String expirationDate) {
-//
-//        log.info("form received => name: {}, discount: {}, expiry: {}", name, discount, expirationDate);
-//        return "redirect:/home";
-//    }
 }

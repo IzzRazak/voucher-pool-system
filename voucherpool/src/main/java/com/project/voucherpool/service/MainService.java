@@ -59,6 +59,7 @@ public class MainService {
         try {
             boolean isEmailExist = recipientRepository.existsByEmail(recipient.getEmail());
 
+            // If email exist, end process
             if(isEmailExist) {
                 log.info("[INFO] Service : isEmailExist => {}", isEmailExist);
                 return new ResponseBody("Email is exist", HttpStatus.FORBIDDEN.value(), null);
@@ -81,6 +82,7 @@ public class MainService {
         if(offerQuery.isPresent())
             offer = offerQuery.get();
         else {
+            // If offer not exist, end process
             offer = null;
             return new ResponseBody("Offer is not exist !", HttpStatus.FORBIDDEN.value(), null);
         }
@@ -88,16 +90,20 @@ public class MainService {
         String formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         List<Recipient> recipientList = recipientRepository.findAll();
 
+        // If offer already have vouchers generated
         if(offer.getIsVoucherExist().equals("Y"))
             return new ResponseBody("Vouchers already existed !", HttpStatus.FORBIDDEN.value(), null);
 
         try {
             recipientList.stream().forEach(recipient -> {
+                // Create base characters to generate random char
+                // Base chars = date + recipient name + email + offer name
                 String randomChars = formattedDate + recipient.getName() + recipient.getEmail() + offer.getName();
                 randomChars = randomChars.replaceAll("[^a-zA-Z0-9]", "");
                 randomChars = randomChars.toUpperCase();
                 log.info("[INFO] Service : randomChars => {}", randomChars);
 
+                // Generate code in loop, if similar in db, generate again
                 Boolean voucherFlag = true; String voucherCode = "";
                 do {
                     voucherCode = generateRandomCode(randomChars);
@@ -110,6 +116,7 @@ public class MainService {
 
                 log.info("[INFO] Service : voucher code => {}", voucherCode);
 
+                // Set hours to be end of the day
                 varDate.setHours(23);
                 Voucher voucher = new Voucher();
                 voucher.setCode(voucherCode);
@@ -122,7 +129,7 @@ public class MainService {
 
                 voucherRepository.save(voucher);
             });
-
+            // Set offer as 'has voucher'
             offer.setIsVoucherExist("Y");
             offer.setLastUpdAt(new Date());
 
@@ -143,12 +150,15 @@ public class MainService {
             if(voucherQuery.isPresent()) {
                 Voucher voucher = voucherQuery.get();
 
+                // If voucher already used, end process
                 if(voucher.getUsage().equals("Y"))
                     return new ResponseBody("Voucher has been used !", HttpStatus.FORBIDDEN.value(), null);
 
+                // If voucher already expired, end process
                 if(voucher.getExpirationDate().compareTo(new Date()) < 0)
                     return new ResponseBody("Voucher is expired !", HttpStatus.FORBIDDEN.value(), null);
 
+                // Set voucher as 'used'
                 voucher.setUsage("Y");
                 voucher.setUsedAt(new Date());
                 voucher.setLastUpdAt(new Date());
@@ -159,6 +169,7 @@ public class MainService {
                 String msg = "Voucher has been validated ! Discount is " + df.format(offer.getPercentageDiscount()) + "%";
                 return new ResponseBody(msg, HttpStatus.OK.value(), null);
             } else {
+                // If record not exist / email not tally with voucher
                 return new ResponseBody("Invalid data !", HttpStatus.OK.value(), null);
             }
         } catch (Exception e) {
@@ -173,6 +184,7 @@ public class MainService {
         Random rdm = new Random();
         var codeLength = CODE_LENGTH;
 
+        // Generate random char based on base chars
         for (int i = 0; i < codeLength; i++) {
             int randomIndex = rdm.nextInt(baseChars.length());
             char randomChar = baseChars.charAt(randomIndex);
