@@ -29,3 +29,9 @@
   <li>Enter voucher code and email of recipient</li>
   <li>Submit form</li>
 </ol>
+
+<p>Some data already created: </p>
+<ul>
+  <li>2 Offer</li>
+  <li>2 Recipient</li>
+</ul>
