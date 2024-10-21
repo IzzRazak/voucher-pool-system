@@ -14,9 +14,11 @@
 
 
 <h3>System Manual</h3>
-<p>Please add Offer and Recipient data before testing</p>
-<p>To add Offer* and Recipient data, please fill up necessary form and submit</p>
-<p>* For Offer data, please enter valid date with format: 'YYYY-DD-MM'</p>
+<ul>
+  <li>Please add Offer and Recipient data before testing</li>
+  <li>To add Offer and Recipient data, please fill up necessary form and submit</li>
+  <li>For Offer data, please enter valid date with format: 'YYYY-DD-MM'</li>
+</ul>
 
 <p><b>To generate voucher</b></p>
 <ol>
